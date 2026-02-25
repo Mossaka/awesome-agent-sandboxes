@@ -65,6 +65,9 @@ Projects purpose-built for AI agent sandboxing. These platforms provide managed 
 - **[Alibaba OpenSandbox](https://github.com/alibaba/OpenSandbox)** - General-purpose sandbox platform for AI applications with multi-language SDKs. `stars: 1.2k` `Java/Python/TypeScript`
   - Alibaba-backed. Examples for Claude Code, Gemini CLI, Codex CLI. Docker and K8s runtimes.
 
+- **[Anthropic Sandbox Runtime (srt)](https://github.com/anthropic-experimental/sandbox-runtime)** - Lightweight OS-level sandboxing for AI agents restricting filesystem and network access without containers. `stars: 3.2k` `TypeScript`
+  - **Built for Claude Code.** Uses Seatbelt (macOS) + Bubblewrap (Linux). Network allowlisting via proxy. Secure-by-default with dual filesystem + network isolation.
+
 - **[Dify Sandbox](https://github.com/langgenius/dify-sandbox)** - Lightweight code execution sandbox for the Dify AI platform using seccomp. `stars: 1.1k` `Go`
   - Part of Dify ecosystem (~70k+ stars). Seccomp-based syscall filtering + chroot isolation. Multi-tenant.
 
@@ -255,6 +258,9 @@ Operating system primitives and tools for sandboxing processes without full virt
 
 - **[Landlock LSM](https://github.com/landlock-lsm)** - Linux kernel module for unprivileged process filesystem and network access restriction. `kernel`
   - Used by **OpenAI Codex** and **Cursor** for agent sandboxing. Available since kernel 5.13. ABI v5 in Linux 6.7+. ([rust-landlock](https://github.com/landlock-lsm/rust-landlock) `stars: 201`, [go-landlock](https://github.com/landlock-lsm/go-landlock) `stars: 276`)
+
+- **[GitHub Agentic Workflow Firewall (gh-aw-firewall)](https://github.com/github/gh-aw-firewall)** - L7 HTTP/HTTPS egress control for AI agents and MCP servers using Squid proxy + Docker. `stars: 37` `TypeScript`
+  - GitHub. Domain allowlisting for agentic workflows. iptables enforcement + optional chroot mode. Credential management via API proxy sidecar.
 
 - **[sandboxec](https://github.com/dwisiswant0/sandboxec)** - Lightweight single-binary Landlock sandbox with MCP mode for AI agent tool integration. `stars: 45` `Go`
   - Very early stage (Feb 2026). Novel MCP mode for integrating with agent tool chains.
