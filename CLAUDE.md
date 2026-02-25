@@ -4,11 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Purpose
 
-Curated "awesome list" of 130+ sandboxing technologies for AI agents — containers, microVMs, WebAssembly, OS-level isolation, language runtimes, and cloud platforms. Serves as a landscape overview for anyone building, deploying, or researching agent sandboxing.
+Curated "awesome list" of ~80 sandboxing technologies for AI agents — containers, microVMs, WebAssembly, OS-level isolation, language runtimes, and cloud platforms. Serves as a landscape overview for anyone building, deploying, or researching agent sandboxing.
 
 ## Repository Structure
 
-- `README.md` — The main awesome list. 131 entries organized by isolation mechanism with a Landscape Overview section covering industry trends.
+- `README.md` — The main awesome list. ~80 curated entries organized by isolation mechanism with a Landscape Overview section covering industry trends.
 - `getting-started.md` — Installation and quickstart guides for the top 15 sandboxes, with a comparison matrix and "Choosing the Right Sandbox" guide.
 - `research/` — Raw research files from the initial data gathering phase (6 category-specific research files + 2 verified/deduplicated files). These are reference material, not user-facing.
 - `CLAUDE.md` — This file.
@@ -20,7 +20,6 @@ Each entry in README.md follows this pattern:
 - [🤖] **[Name](url)** - Description. `stars: Xk` `language`
   - One line about agent relevance
 ```
-- 🤖 marks projects purpose-built for AI agent sandboxing
 - ⚠️ marks archived/superseded projects
 
 ## Categories
@@ -43,7 +42,8 @@ Each entry in README.md follows this pattern:
 - Verify the project exists and is not abandoned before adding.
 - Focus on properties that matter for agent sandboxing: startup latency, resource overhead, security boundary strength, API surface (MCP, SDK, REST), language/runtime support, and orchestration.
 - Filter out projects with <50 GitHub stars unless they offer genuinely novel approaches.
-- Mark agent-purpose-built projects with 🤖 and archived projects with ⚠️.
+- Mark archived projects with ⚠️.
+- Don't list foundational building blocks already subsumed by higher-level tools (e.g., runc is inside Docker, libseccomp is inside everything). Each entry should stand on its own.
 
 ## Key Landscape Trends (as of Feb 2026)
 
