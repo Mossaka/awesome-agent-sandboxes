@@ -25,6 +25,10 @@ Key properties that matter for agent sandboxing: **startup latency** (agents nee
   - [Wasm Runtimes](#wasm-runtimes)
   - [Wasm Agent Sandboxes](#wasm-agent-sandboxes)
 - [OS-Level & Process Isolation](#os-level--process-isolation)
+- [Network & Agent Firewalls](#network--agent-firewalls)
+  - [Agent Network Gateways](#agent-network-gateways)
+  - [MCP & Tool Call Firewalls](#mcp--tool-call-firewalls)
+  - [eBPF Agent Monitoring](#ebpf-agent-monitoring)
 - [Language Runtime Sandboxes](#language-runtime-sandboxes)
   - [JavaScript / TypeScript](#javascript--typescript)
   - [Python](#python)
@@ -80,8 +84,20 @@ Projects purpose-built for AI agent sandboxing. These platforms provide managed 
 - **[Arrakis](https://github.com/abshkbh/arrakis)** - Self-hosted microVM sandbox with snapshot/restore for agent backtracking. `stars: 763` `Go`
   - Uses Cloud Hypervisor. MCP server + Python SDK + REST API. Unique snapshot/restore for MCTS-style agents.
 
+- **[Gondolin](https://github.com/earendil-works/gondolin)** - MicroVM sandbox with fully programmable JavaScript network/filesystem policies and secret injection. `stars: 586` `TypeScript/Zig`
+  - QEMU VMs with network stack implemented in JS for full programmatic control. Secrets never enter the VM. Contributions from Armin Ronacher (Flask/Sentry).
+
+- **[Matchlock](https://github.com/jingkaihe/matchlock)** - MicroVM sandbox with network allowlisting and secret injection via MITM proxy. `stars: 475` `Go`
+  - Firecracker (Linux) + Apple Virtualization.framework (macOS). Secrets never enter the VM — proxy injects real credentials only for allowlisted hosts. Go/Python/TS SDKs.
+
 - **[nono](https://github.com/always-further/nono)** - Kernel-enforced sandbox CLI/SDKs for AI agents with capability-based isolation and audit trails. `stars: 586` `Go`
   - Created by Luke Hinds (Sigstore creator). Landlock (Linux) + Seatbelt (macOS). Ships profiles for Claude Code, Codex.
+
+- **[EdgeBox](https://github.com/BIGPPWONG/EdgeBox)** - GUI-powered local LLM agent sandbox with full desktop environment via VNC for "Computer Use" agents. `stars: 195` `TypeScript`
+  - Based on E2B code. CLI + desktop GUI. MCP support. Cross-platform (Windows, macOS, Linux). Unique among sandboxes for providing graphical desktop.
+
+- **[Vercel Sandbox SDK](https://github.com/vercel/sandbox)** - SDK for Vercel's Firecracker-based ephemeral compute with credential injection. `stars: 54` `TypeScript`
+  - API keys auto-injected via HTTP headers — never enter the VM. Same infra powering 2M+ daily Vercel builds. Free tier.
 
 - **[CodeSandbox SDK / Together](https://github.com/codesandbox/codesandbox-sdk)** - Programmatic API for microVM-based dev environments, now part of Together AI. `stars: 101` `TypeScript`
   - MicroVM infrastructure with snapshot/restore. Together AI acquisition validates significance.
@@ -115,6 +131,12 @@ Projects purpose-built for AI agent sandboxing. These platforms provide managed 
 - **[Amazon Bedrock AgentCore](https://aws.amazon.com/bedrock/agentcore/)** - Fully managed AWS service for AI agents to securely execute code in isolated sandboxes. `proprietary`
   - Supports Strands, LangChain, LangGraph, CrewAI frameworks.
 
+- **[Vercel Sandbox](https://vercel.com/sandbox)** - Ephemeral Firecracker microVM compute with credential injection and active CPU billing. `proprietary`
+  - Up to 8 vCPUs per sandbox. Sub-second init. SDK is open source. Integrates with AI SDK 6, Claude Agent SDK.
+
+- **[Kiro](https://github.com/kirodotdev/Kiro)** - AWS agentic IDE with configurable sandbox isolation per task. `stars: 3.1k` `TypeScript`
+  - Three network modes (integration only, common deps, open internet). Secret management. Up to 10 concurrent tasks. Can work autonomously for days.
+
 - **[Morph Cloud](https://github.com/morph-labs/morphcloud-examples-public)** - Cloud infrastructure for AI agents with environment branching and burst scalability. `stars: ~200` `Python`
   - YC-backed. Environment branching for parallel agent execution.
 
@@ -135,6 +157,9 @@ Lightweight virtual machines and hypervisors providing hardware-level isolation.
 
 - **[Cloud Hypervisor](https://github.com/cloud-hypervisor/cloud-hypervisor)** - Modern cloud VMM written in Rust with CPU/memory hotplug. `stars: 5.3k` `Rust`
   - Used by Arrakis as its VMM. Supported by Kata Containers.
+
+- **[Lima](https://github.com/lima-vm/lima)** - Linux VMs on macOS/Linux. CNCF Incubating. v2.0 added AI agent sandboxing features. `stars: 20.3k` `Go`
+  - MCP tools for agents to execute in isolated VMs. Pluggable VM drivers (QEMU, krunkit). Supports Claude Code, Codex, Gemini inside VMs.
 
 - **[Microsoft LiteBox](https://github.com/microsoft/litebox)** - Security-focused library OS in Rust reducing host attack surface. `stars: 2.4k` `Rust`
   - Released Feb 2026. Supports AMD SEV-SNP confidential computing. Experimental.
@@ -231,6 +256,9 @@ WebAssembly provides capability-based sandboxing with near-native performance. T
 - **[amla-sandbox](https://github.com/amlalabs/amla-sandbox)** - WASM sandbox with capability enforcement for AI agents. QuickJS inside WASM. `stars: 309` `Rust`
   - Unforgeable capability tokens. Targets LangChain, AutoGen, SWE-Agent frameworks.
 
+- **[Mozilla Wasm Agents Blueprint](https://github.com/mozilla-ai/wasm-agents-blueprint)** - Run Python AI agents (OpenAI Agents SDK) entirely in-browser via WebAssembly/Pyodide. `stars: 210` `Python`
+  - Zero server-side execution. Browser-as-sandbox with inherent Wasm isolation. Supports local models via Ollama.
+
 - **[Sandbox MCP (Cosmonic)](https://sandboxmcp.ai)** - Plugin for wasmCloud generating MCP servers as secure Wasm components from OpenAPI specs. `proprietary`
   - Converts OpenAPI specs to sandboxed MCP tools. Tightly coupled to wasmCloud ecosystem.
 
@@ -264,6 +292,34 @@ Operating system primitives and tools for sandboxing processes without full virt
 
 - **[sandboxec](https://github.com/dwisiswant0/sandboxec)** - Lightweight single-binary Landlock sandbox with MCP mode for AI agent tool integration. `stars: 45` `Go`
   - Very early stage (Feb 2026). Novel MCP mode for integrating with agent tool chains.
+
+## Network & Agent Firewalls
+
+Network-layer controls for AI agents — egress filtering, credential injection, MCP firewalls, and runtime monitoring. A critical complement to compute isolation since network exfiltration is a major threat vector.
+
+### Agent Network Gateways
+
+- **[Agentgateway](https://github.com/agentgateway/agentgateway)** - Open-source data plane for agentic AI connectivity supporting MCP and A2A protocols. `stars: 1.8k` `Rust`
+  - Solo.io. Drop-in security, observability, and governance for agent-to-agent and agent-to-tool communication. Part of the kagent/Istio stack.
+
+- **[Envoy AI Gateway](https://github.com/envoyproxy/ai-gateway)** - Production-grade API gateway for AI agent-to-LLM traffic with token-based rate limiting. `stars: 1.4k` `Go`
+  - Built on Envoy. CEL-based cost expressions. Fine-grained per-model/per-user rate limits. Two-tier architecture.
+
+- **[Harden-Runner](https://github.com/step-security/harden-runner)** - CI/CD security agent with network egress monitoring and domain allowlisting. `stars: 966` `TypeScript`
+  - eBPF-based on K8s runners. Automated baseline creation. CISA uses across 175+ repos. Detected real supply chain attacks.
+
+### MCP & Tool Call Firewalls
+
+- **[Rampart](https://github.com/peg/rampart)** - Multi-layer firewall for AI agents with MCP proxy, LD_PRELOAD interception, and shell shim. `stars: 25` `Go`
+  - YAML policy engine evaluates in ~20 microseconds. Hash-chained audit trail. Supports Claude Code, Codex, Cursor, OpenClaw. Cross-platform.
+
+- **[Invariant Gateway](https://github.com/invariantlabs-ai/invariant-gateway)** - LLM proxy for observing and enforcing guardrails on AI agent requests. `stars: 66` `TypeScript`
+  - Traces all agent-LLM interactions. Evaluates security rules on each request. Companion to Invariant Guardrails (`stars: 389`).
+
+### eBPF Agent Monitoring
+
+- **[AgentSight](https://github.com/eunomia-bpf/agentsight)** - Zero-instrumentation AI agent observability using eBPF. `stars: 209` `C/Go`
+  - Correlates LLM intent (via TLS interception) with system effects (kernel monitoring). <3% overhead. Published at ACM Workshop. Detects prompt injection, reasoning loops. Tested with Claude Code and Gemini CLI.
 
 ## Language Runtime Sandboxes
 
@@ -322,6 +378,9 @@ Kubernetes-specific solutions for managing AI agent sandbox workloads at scale.
 - **[kubernetes-sigs/agent-sandbox](https://github.com/kubernetes-sigs/agent-sandbox)** - Kubernetes CRD/controller for managing isolated AI agent runtimes. `stars: 1.1k` `Go`
   - CNCF SIG Apps subproject. Launched at KubeCon NA 2025 (Google). Uses gVisor + Kata Containers. WarmPools for sub-second startup.
 
+- **[Kagent](https://github.com/kagent-dev/kagent)** - Kubernetes-native framework for building and running AI agents. CNCF Sandbox. `stars: 2.2k` `Go`
+  - Created by Solo.io. Built on A2A, ADK, and MCP. Ships MCP server with tools for K8s, Istio, Helm, Argo, Prometheus, Cilium. Agents inherit K8s RBAC and network policies.
+
 ## Confidential Computing & TEEs
 
 Trusted Execution Environments for running agent workloads with hardware-attested privacy guarantees.
@@ -338,6 +397,9 @@ Trusted Execution Environments for running agent workloads with hardware-atteste
 ## Novel & Research
 
 ### Experimental Projects
+
+- **[UK AISI Sandboxing Toolkit](https://github.com/UKGovernmentBEIS/aisi-sandboxing)** - Government-grade sandboxing protocol for agentic evaluations with three-axis isolation. `stars: 19` `Python`
+  - UK AI Safety Institute. Three isolation axes: tooling, host, network. Adopted by US CAISI, METR, Apollo Research. Plugins for Docker Compose, K8s, Proxmox. Designed for testing sandbox escape capabilities.
 
 - **[awesome-sandbox](https://github.com/restyler/awesome-sandbox)** - Curated list and analysis of modern code sandboxing solutions for AI. `stars: 352`
   - Community resource with comprehensive comparison of sandbox solutions. AI agent focus.
@@ -380,6 +442,8 @@ The agent sandbox ecosystem has matured rapidly since mid-2025. Key trends:
 **WebAssembly for fine-grained isolation.** Wasm's capability-based security model is gaining traction for agent tool sandboxing. Wassette (Microsoft), amla-sandbox, and Pydantic Monty (Pyodide successor) use Wasm to sandbox individual tool invocations rather than entire environments.
 
 **Snapshot/restore as a pattern.** Arrakis, Replit, Morph Cloud, and Fly.io/Sprites offer environment snapshotting, enabling agents to checkpoint state and roll back — critical for MCTS-style agent architectures that explore multiple solution paths.
+
+**Credential injection via proxy.** An emerging best practice: secrets never enter the agent sandbox. A host-side MITM proxy intercepts outbound HTTPS and swaps placeholder tokens for real API keys, but only for allowlisted hosts. If a compromised agent exfiltrates the placeholder to an unauthorized server, it's useless. Implemented by Matchlock, Gondolin, gh-aw-firewall, Vercel Sandbox, and Anthropic's sandbox-runtime.
 
 **Self-hosted vs. cloud.** The market is splitting between cloud platforms (E2B, Modal, Blaxel) and self-hosted solutions (microsandbox, Arrakis, nono). Self-hosted options are emerging for enterprises with data sovereignty requirements.
 
