@@ -96,6 +96,9 @@ Projects purpose-built for AI agent sandboxing. These platforms provide managed 
 - **[EdgeBox](https://github.com/BIGPPWONG/EdgeBox)** - GUI-powered local LLM agent sandbox with full desktop environment via VNC for "Computer Use" agents. `stars: 195` `TypeScript`
   - Based on E2B code. CLI + desktop GUI. MCP support. Cross-platform (Windows, macOS, Linux). Unique among sandboxes for providing graphical desktop.
 
+- **[SandBase Harness](https://github.com/sandbaseai/sandbase-harness)** - Local-first, self-hosted agent runtime with persistent sessions, approval gates, audit/replay, artifacts, and pluggable local, Docker, Kubernetes, and worker execution. `stars: 638` `TypeScript` `Apache-2.0`
+  - MCP bridge for compatible clients. Distinctive focus: combining durable agent-session state and governance with selectable sandbox backends rather than providing only an execution API.
+
 - **[Vercel Sandbox SDK](https://github.com/vercel/sandbox)** - SDK for Vercel's Firecracker-based ephemeral compute with credential injection. `stars: 54` `TypeScript`
   - API keys auto-injected via HTTP headers — never enter the VM. Same infra powering 2M+ daily Vercel builds. Free tier.
 
