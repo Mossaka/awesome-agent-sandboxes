@@ -123,6 +123,9 @@ Projects purpose-built for AI agent sandboxing. These platforms provide managed 
   - 2M+ isolated workloads monthly. Production-grade with multi-cloud deployment.
 
 - **[Novita AI Sandbox](https://novita.ai/sandbox)** - E2B-compatible sandbox runtime with per-second billing and sub-200ms startup. `proprietary`
+
+- **[Sandbox0](https://sandbox0.ai)** - Managed cloud computers with gVisor isolation and persistent writable RootFS checkpoints. `proprietary`
+  - Cloud compute pauses between tasks; open-source SDKs and CLI are available.
   - Drop-in E2B API compatibility. Competitive pricing model.
 
 - **[Replit Agent](https://replit.com)** - AI coding agent platform with snapshot engine, versioned databases, and Docker sandboxes. `proprietary`
